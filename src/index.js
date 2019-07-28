@@ -1,12 +1,36 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import './index.css';
+import {BrowserRouter, Route} from 'react-router-dom';
+import "semantic-ui-css/semantic.min.css";
 import App from './App';
-import * as serviceWorker from './serviceWorker';
+import registerServiceWorker from "./registerServiceWorker";
+import { createStore, applyMiddleware } from 'redux';
+import {Provider} from 'react-redux';
+import thunk from 'redux-thunk';
+import rootReducer from "./rootReducer";
+import {composeWithDevTools} from 'redux-devtools-extension';
+import { userLoggedIn } from './actions/auth';
+import decode from 'jwt-decode';
+import setAutorizationHeader from '../utils/setAutorizationHeader';
 
-ReactDOM.render(<App />, document.getElementById('root'));
+const store = createStore (
+    rootReducer, 
+    composeWithDevTools(applyMiddleware(thunk))
+);
 
-// If you want your app to work offline and load faster, you can change
-// unregister() to register() below. Note this comes with some pitfalls.
-// Learn more about service workers: https://bit.ly/CRA-PWA
-serviceWorker.unregister();
+if(localStorage.movieLoversJWT) {
+    const payload = decode(localStorage.movieLoversJWT);
+    const user = {token: localStorage.movieLoversJWT, email: payload.email, confirmed: payload.confirmed};
+    setAutorizationHeader(localStorage.movieLoversJWT);
+    store.dispatch(userLoggedIn(user));
+}
+
+ReactDOM.render(
+    <BrowserRouter>
+    <Provider store={store}>
+        <Route component={App} />
+    </Provider>
+    </BrowserRouter>,
+    document.getElementById("root")
+);
+registerServiceWorker();
