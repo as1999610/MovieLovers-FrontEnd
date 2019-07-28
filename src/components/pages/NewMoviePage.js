@@ -14,9 +14,8 @@ class NewMoviePage extends React.Component {
 
     onMovieSelect = movie => {
         this.setState({movie});
-        axios.get(`/api/books/fetchPages?goodWatchId=${movie.goodWatchId}`).then(res => res.data.duration).then(pages => this.setState({movie: {...movie, pages}}));
+        axios.get(`/api/movies/fetchDuration?goodWatchId=${movie.goodWatchId}`).then(res => res.data.duration).then(pages => this.setState({movie: {...movie, pages}}));
     };
-
     addMovie = (movie) => this.props.createMovie(movie).then(() => this.props.history.push('/dashboard'));
 
     render() {
