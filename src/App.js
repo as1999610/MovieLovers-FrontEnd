@@ -28,7 +28,7 @@ const app = ({location, isAuthenticated}) => (
 </div>
 );
 
-App.propTypes = {
+app.propTypes = {
     location: PropTypes.shape({
         pathname: PropTypes.string.isRequired
     }).isRequired,
